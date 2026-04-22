@@ -1,0 +1,128 @@
+# ============================================
+# Jarvis AI Assistant - Configuration
+# ============================================
+
+server:
+  port: 8080
+
+spring:
+  application:
+    name: jarvis-ai
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    default-property-inclusion: non_null
+
+# ============================================
+# Jarvis Core Configuration
+# ============================================
+jarvis:
+  # Wake word for activation
+  wake-word: "hey jarvis"
+  # Enable continuous listening mode
+  continuous-listening: false
+  # Max command execution timeout in seconds
+  command-timeout: 30
+
+  # LOCAL LLM CONFIGURATION (Ollama)
+  openai:
+    api-key: "ollama" # Just a placeholder, Ollama local ignores this
+    model: "llama3.1"
+    base-url: "http://localhost:11434/v1" # Ollama's local OpenAI-compatible endpoint
+    max-tokens: 1024
+    temperature: 0.1
+
+  # LOCAL STT CONFIGURATION (Python Whisper)
+  whisper:
+    mode: "local"
+    model: "base.en" # Lightweight English model, downloads automatically
+    language: "en"
+    # Provide the exact path your terminal outputted for Whisper, usually 'whisper' works if it's in your PATH
+    local-binary-path: "whisper" 
+
+
+  # Text-to-Speech Configuration
+  tts:
+    # Options: macos_say, openai
+    engine: macos_say
+    # macOS say command voice
+    voice: Samantha
+    # Speech rate (words per minute)
+    rate: 200
+
+  # Audio Configuration
+  audio:
+    sample-rate: 16000
+    sample-size: 16
+    channels: 1
+    # Recording format
+    format: WAV
+    # Silence threshold for auto-stop (0.0 - 1.0)
+    silence-threshold: 0.02
+    # Silence duration to stop recording (ms)
+    silence-duration: 2000
+    # Temp directory for audio files
+    temp-dir: ${java.io.tmpdir}/jarvis/audio
+
+  # Command Execution Configuration
+  execution:
+    # Enable sandboxed execution
+    sandboxed: true
+    # Allowed command prefixes (security whitelist)
+    allowed-prefixes:
+      - open
+      - say
+      - system_profiler
+      - pmset
+      - osascript
+      - defaults
+      - mdls
+      - mdfind
+      - sw_vers
+      - sysctl
+      - diskutil
+      - networksetup
+      - date
+      - cal
+      - touch
+      - mkdir
+      - cat
+      - ls
+      - echo
+      - pbcopy
+      - pbpaste
+      - caffeinate
+      - screencapture
+    # Blocked commands (security blacklist)
+    blocked-commands:
+      - rm -rf /
+      - sudo rm
+      - mkfs
+      - dd if=
+
+# ============================================
+# Logging Configuration
+# ============================================
+logging:
+  level:
+    root: INFO
+    com.jarvis: DEBUG
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/jarvis.log
+    max-size: 10MB
+    max-history: 30
+
+# ============================================
+# Actuator Configuration
+# ============================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always

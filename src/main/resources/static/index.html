@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JARVIS — AI Voice Assistant</title>
+    <meta name="description" content="Jarvis AI Voice Assistant - Your intelligent macOS command center powered by Spring Boot and OpenAI">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/jarvis.css">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+    <div class="bg-glow bg-glow-3"></div>
+
+    <!-- Particle Canvas -->
+    <canvas id="particles"></canvas>
+
+    <!-- Main Container -->
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">
+                    <div class="logo-arc">
+                        <svg viewBox="0 0 60 60" class="arc-reactor">
+                            <circle cx="30" cy="30" r="28" class="arc-ring arc-ring-outer"/>
+                            <circle cx="30" cy="30" r="20" class="arc-ring arc-ring-mid"/>
+                            <circle cx="30" cy="30" r="12" class="arc-ring arc-ring-inner"/>
+                            <circle cx="30" cy="30" r="5" class="arc-core"/>
+                            <line x1="30" y1="2" x2="30" y2="10" class="arc-line"/>
+                            <line x1="30" y1="50" x2="30" y2="58" class="arc-line"/>
+                            <line x1="2" y1="30" x2="10" y2="30" class="arc-line"/>
+                            <line x1="50" y1="30" x2="58" y2="30" class="arc-line"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <h1>J.A.R.V.I.S</h1>
+                        <span class="logo-subtitle">Just A Rather Very Intelligent System</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="status-indicator" id="statusIndicator">
+                    <span class="status-dot"></span>
+                    <span class="status-text">ONLINE</span>
+                </div>
+                <div class="system-time" id="systemTime"></div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Left Panel: Command Center -->
+            <section class="panel command-panel">
+                <div class="panel-header">
+                    <h2>Command Center</h2>
+                    <div class="panel-actions">
+                        <button class="btn-icon" id="btnClearHistory" title="Clear History">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3,6 5,6 21,6"/><path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2v2"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Command Input -->
+                <div class="command-input-area">
+                    <div class="input-wrapper">
+                        <div class="input-glow"></div>
+                        <input type="text" id="commandInput" placeholder="Enter a command..." autocomplete="off" spellcheck="false">
+                        <button class="btn-send" id="btnSend" title="Send Command">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg>
+                        </button>
+                    </div>
+
+                    <div class="command-actions">
+                        <button class="btn-action" id="btnVoice" title="Voice Command">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12,1a3,3,0,0,0-3,3v8a3,3,0,0,0,6,0V4A3,3,0,0,0,12,1Z"/><path d="M19,10v2a7,7,0,0,1-14,0V10"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                            <span>Voice</span>
+                        </button>
+                        <label class="toggle-switch" title="Speak Responses">
+                            <input type="checkbox" id="toggleSpeak" checked>
+                            <span class="toggle-slider"></span>
+                            <span class="toggle-label">TTS</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Conversation History -->
+                <div class="conversation-area" id="conversationArea">
+                    <div class="welcome-message">
+                        <div class="welcome-icon">
+                            <svg viewBox="0 0 60 60" class="arc-reactor mini">
+                                <circle cx="30" cy="30" r="28" class="arc-ring arc-ring-outer"/>
+                                <circle cx="30" cy="30" r="20" class="arc-ring arc-ring-mid"/>
+                                <circle cx="30" cy="30" r="12" class="arc-ring arc-ring-inner"/>
+                                <circle cx="30" cy="30" r="5" class="arc-core"/>
+                            </svg>
+                        </div>
+                        <h3>Good evening, Sir.</h3>
+                        <p>I'm Jarvis, your AI assistant. How may I help you today?</p>
+                        <div class="quick-commands">
+                            <button class="quick-cmd" data-cmd="What's my battery status?">🔋 Battery Status</button>
+                            <button class="quick-cmd" data-cmd="Open Safari">🌐 Open Safari</button>
+                            <button class="quick-cmd" data-cmd="Take a screenshot">📸 Screenshot</button>
+                            <button class="quick-cmd" data-cmd="Toggle dark mode">🌙 Dark Mode</button>
+                            <button class="quick-cmd" data-cmd="What time is it?">🕐 Time</button>
+                            <button class="quick-cmd" data-cmd="Set volume to 50">🔊 Volume 50%</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Panel: System Dashboard -->
+            <section class="panel dashboard-panel">
+                <div class="panel-header">
+                    <h2>System Dashboard</h2>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card" id="statActions">
+                        <div class="stat-icon">⚡</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="actionCountVal">0</span>
+                            <span class="stat-label">Actions Available</span>
+                        </div>
+                    </div>
+                    <div class="stat-card" id="statCommands">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="commandCountVal">0</span>
+                            <span class="stat-label">Commands Run</span>
+                        </div>
+                    </div>
+                    <div class="stat-card" id="statLatency">
+                        <div class="stat-icon">⏱️</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="latencyVal">—</span>
+                            <span class="stat-label">Avg Latency</span>
+                        </div>
+                    </div>
+                    <div class="stat-card" id="statUptime">
+                        <div class="stat-icon">🟢</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="uptimeVal">0s</span>
+                            <span class="stat-label">Session Time</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Supported Actions -->
+                <div class="actions-section">
+                    <h3>Supported Actions</h3>
+                    <div class="actions-grid" id="actionsGrid">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="activity-section">
+                    <h3>Recent Activity</h3>
+                    <div class="activity-list" id="activityList">
+                        <div class="activity-empty">No activity yet. Try a command!</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Voice Recording Overlay -->
+        <div class="voice-overlay" id="voiceOverlay">
+            <div class="voice-modal">
+                <div class="voice-rings">
+                    <div class="voice-ring ring-1"></div>
+                    <div class="voice-ring ring-2"></div>
+                    <div class="voice-ring ring-3"></div>
+                    <div class="voice-mic-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M12,1a3,3,0,0,0-3,3v8a3,3,0,0,0,6,0V4A3,3,0,0,0,12,1Z"/>
+                            <path d="M19,10v2a7,7,0,0,1-14,0V10"/>
+                            <line x1="12" y1="19" x2="12" y2="23"/>
+                            <line x1="8" y1="23" x2="16" y2="23"/>
+                        </svg>
+                    </div>
+                </div>
+                <p class="voice-status" id="voiceStatus">Listening...</p>
+                <button class="btn-voice-stop" id="btnVoiceStop">Stop & Process</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/jarvis.js"></script>
+</body>
+</html>
